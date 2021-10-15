@@ -9,4 +9,4 @@ const Navbar = ({ setPage }) => {
     );
 }
 
-export default Navbar;
+export default Navbar

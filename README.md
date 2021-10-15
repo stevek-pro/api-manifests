@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Chino.io API Requests for ReactJS
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
