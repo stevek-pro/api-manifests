@@ -1,12 +1,12 @@
 {
-  "default" : "https://raw.githubusercontent.com/stevek-pro/cococloud/main/api/consenta-openapi.yml",
+  "default" : "https://raw.githubusercontent.com/stevek-pro/api-manifests/main/api/consenta-openapi.yml",
   "specs" : [{
 	"title" : "Chino Scriba",
-	"url" : "https://raw.githubusercontent.com/stevek-pro/cococloud/main/api/scriba-openapi.yml",
+	"url" : "https://raw.githubusercontent.com/stevek-pro/api-manifests/main/api/scriba-openapi.yml",
 	"description" : "First OpenAPI Specification"
     },{
 	"title" : "Chino Consenta",
-	"url" : "https://raw.githubusercontent.com/stevek-pro/cococloud/main/api/consenta-openapi.yml",
+	"url" : "https://raw.githubusercontent.com/stevek-pro/api-manifests/main/api/consenta-openapi.yml",
 	"description" : "Second OpenAPI Specification"
     }]
 }
