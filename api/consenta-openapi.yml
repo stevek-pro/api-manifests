@@ -1,0 +1,1236 @@
+swagger: '2.0'
+info:
+  title: 'Chino.io :: Consenta API'
+  description: An API for the collection and management of user's Consent. <br>Provided
+    by Chino.io - https://www.chino.io
+  contact:
+    email: tech-support@chino.io
+  version: v1
+host: consenta.test.chino.io
+schemes:
+  - https
+basePath: /api
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+    name: Authorization
+    in: header
+    description: |-
+      Basic authentication with Customer ID and Customer Key.
+
+      You can manage your Customer Keys from the Chino.io Console
+  BearerJwt:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: A Json Web Token dispatched by Chino.io authentication service. *Available
+      soon.*
+security:
+  - Basic: []
+  - BearerJwt: []
+paths:
+  /consents/:
+    get:
+      operationId: consents_list
+      summary: List Consents
+      description: List all the Consents available on the account.
+      parameters:
+        - name: consent_id
+          in: query
+          description: Filter by UUID of the Consent (exact match)
+          required: false
+          type: string
+        - name: is_active
+          in: query
+          description: Filter only active or inactive Consents (exact match)
+          required: false
+          type: string
+        - name: creation__lt
+          in: query
+          description: Filter by creation date (lower than)
+          required: false
+          type: string
+        - name: creation__gt
+          in: query
+          description: Filter by creation date (greater than)
+          required: false
+          type: string
+        - name: creation__lte
+          in: query
+          description: Filter by creation date (lower or equal)
+          required: false
+          type: string
+        - name: creation__gte
+          in: query
+          description: Filter by creation date (greater or equal)
+          required: false
+          type: string
+        - name: creation__isnull
+          in: query
+          description: Filter by creation date (is null or not)
+          required: false
+          type: string
+        - name: creation
+          in: query
+          description: Filter by creation date (exact match)
+          required: false
+          type: string
+        - name: disabled__lt
+          in: query
+          description: Filter by date of disabling (lower than)
+          required: false
+          type: string
+        - name: disabled__gt
+          in: query
+          description: Filter by date of disabling (greater than)
+          required: false
+          type: string
+        - name: disabled__lte
+          in: query
+          description: Filter by date of disabling (lower or equal)
+          required: false
+          type: string
+        - name: disabled__gte
+          in: query
+          description: Filter by date of disabling (greater or equal)
+          required: false
+          type: string
+        - name: disabled__isnull
+          in: query
+          description: Filter by date of disabling (is null or not)
+          required: false
+          type: string
+        - name: disabled
+          in: query
+          description: Filter by date of disabling (exact match)
+          required: false
+          type: string
+        - name: ordering
+          in: query
+          description: Field to use when ordering the results. Available fields for
+            ordering are `consent_id`, `creation` and `disabled`
+          required: false
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Consent'
+      tags:
+        - consents
+    post:
+      operationId: consents_create
+      summary: Create a new Consent
+      description: Create a new Consent.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OpenApiConsentJSON'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Consent'
+      tags:
+        - consents
+    parameters: []
+  /consents/{consent_id}/:
+    get:
+      operationId: consents_read
+      summary: Read a Consent
+      description: |-
+        Read a Consent.<br> *This call is not protected by
+        authentication.*
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Consent'
+      tags:
+        - consents
+      security: []
+    put:
+      operationId: consents_update
+      summary: Update a Consent
+      description: |-
+        Update an existing Consent.<br>
+        The update completely overwrites the previous Consent.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OpenApiConsentJSON'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Consent'
+      tags:
+        - consents
+    parameters:
+      - name: consent_id
+        in: path
+        required: true
+        type: string
+  /stats/:
+    get:
+      operationId: stats_read
+      summary: Retrieve Customer statistics
+      description: |-
+        Get details about the amount of Consents, UserConsents and users
+        stored in the system for the Customer's account
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Stats'
+      tags:
+        - stats
+    parameters: []
+  /userconsents/:
+    get:
+      operationId: userconsents_list
+      summary: List UserConsents
+      description: List all the UserConsents available on the account.
+      parameters:
+        - name: user_consent_id
+          in: query
+          description: Filter by UUID of the UserConsent (exact match)
+          required: false
+          type: string
+        - name: user_id
+          in: query
+          description: Filter by field `user_id` (exact match)
+          required: false
+          type: string
+        - name: consent
+          in: query
+          description: '**Deprecated.** Use `consent_id` instead. <br>Filter by field
+            `consent` (exact match)'
+          required: false
+          type: string
+        - name: consent__isnull
+          in: query
+          description: '**Deprecated.** Use `consent_id` instead. <br>Filter by field
+            `consent` (is null or not)'
+          required: false
+          type: string
+        - name: updated_date__lt
+          in: query
+          description: Filter by field `updated_date` (lower than)
+          required: false
+          type: string
+        - name: updated_date__gt
+          in: query
+          description: Filter by field `updated_date` (greater than)
+          required: false
+          type: string
+        - name: updated_date__lte
+          in: query
+          description: Filter by field `updated_date` (lower or equal)
+          required: false
+          type: string
+        - name: updated_date__gte
+          in: query
+          description: Filter by field `updated_date` (greater or equal)
+          required: false
+          type: string
+        - name: updated_date__isnull
+          in: query
+          description: Filter by field `updated_date` (is null or not)
+          required: false
+          type: string
+        - name: updated_date
+          in: query
+          description: Filter by field `updated_date` (exact match)
+          required: false
+          type: string
+        - name: created_date__lt
+          in: query
+          description: Filter by field `created_date` (lower than)
+          required: false
+          type: string
+        - name: created_date__gt
+          in: query
+          description: Filter by field `created_date` (greater than)
+          required: false
+          type: string
+        - name: created_date__lte
+          in: query
+          description: Filter by field `created_date` (lower or equal)
+          required: false
+          type: string
+        - name: created_date__gte
+          in: query
+          description: Filter by field `created_date` (greater or equal)
+          required: false
+          type: string
+        - name: created_date__isnull
+          in: query
+          description: Filter by field `created_date` (is null or not)
+          required: false
+          type: string
+        - name: created_date
+          in: query
+          description: Filter by field `created_date` (exact match)
+          required: false
+          type: string
+        - name: withdrawn_date__lt
+          in: query
+          description: Filter by field `withdrawn_date` (lower than)
+          required: false
+          type: string
+        - name: withdrawn_date__gt
+          in: query
+          description: Filter by field `withdrawn_date` (greater than)
+          required: false
+          type: string
+        - name: withdrawn_date__lte
+          in: query
+          description: Filter by field `withdrawn_date` (lower or equal)
+          required: false
+          type: string
+        - name: withdrawn_date__gte
+          in: query
+          description: Filter by field `withdrawn_date` (greater or equal)
+          required: false
+          type: string
+        - name: withdrawn_date__isnull
+          in: query
+          description: Filter by field `withdrawn_date` (is null or not)
+          required: false
+          type: string
+        - name: withdrawn_date
+          in: query
+          description: Filter by field `withdrawn_date` (exact match)
+          required: false
+          type: string
+        - name: is_active
+          in: query
+          description: Filter only active (or inactive) UserConsents
+          required: false
+          type: string
+        - name: consent_id
+          in: query
+          description: Filter by the related Consent UUID
+          required: false
+          type: string
+        - name: ordering
+          in: query
+          description: Field to use when ordering the results. Available fields for
+            ordering are `id`, `updated_date`, `created_date` and `withdrawn_date`
+          required: false
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserConsent'
+      tags:
+        - userconsents
+    post:
+      operationId: userconsents_create
+      summary: Create a UserConsent
+      description: |-
+        Create a new UserConsent, containing the user's response to a Consent. <br>
+
+        **NOTE**: In order for the UserConsent to be valid, it must be
+        [confirmed](#operation/userconsents_confirm_create).
+        Unconfirmed UserConsents will be deleted after **1 day**. <br> <br>
+
+        *This call is not protected by authentication.*
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserConsentCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserConsentId'
+      tags:
+        - userconsents
+      security: []
+    parameters: []
+  /userconsents/{user_consent_id}/:
+    get:
+      operationId: userconsents_read
+      summary: Read a UserConsent
+      description: |-
+        Read a UserConsent.<br>
+        <br>
+        *No authentication is required if the UserConsent has not yet been
+        confirmed.* <br>
+        Otherwise, you must
+        [generate an access_token](#operation/userconsents_token_list)
+        and pass it in the URL query: `?access_token=<userconsent_access_token>`
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserConsent'
+      tags:
+        - userconsents
+      security: []
+    put:
+      operationId: userconsents_update
+      summary: Update a UserConsent
+      description: |-
+        Updates an existing UserConsent. <br>
+        A UserConsent can be updated at any time by a user: he can opt in to
+        (or opt out of) any optional item, i.e. any Purpose and/or
+        Terms & Conditions that have not been marked as mandatory. <br>
+        <br>
+        *No authentication is required if the UserConsent has not yet been
+        confirmed.* <br>
+        Otherwise, you must
+        [generate an access_token](#operation/userconsents_token_list)
+        and pass it in the URL query: `?access_token=<userconsent_access_token>`.
+        <br>
+        <br>
+        When the update is completed, **the access_token will be invalidated**
+        and you will need to generate another one. In this case, the `version`
+        number of the UserConsent will be increased.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserConsentUpdate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserConsentId'
+      tags:
+        - userconsents
+      security: []
+    delete:
+      operationId: userconsents_delete
+      summary: Withdraw or delete a UserConsent
+      description: |-
+        Withdraw the UserConsent. The UserConsent can no longer be updated after
+        this operation.<br>
+        If the UserConsent is not confirmed, it will be deleted forever. Otherwise,
+        the field `withdrawn_date` will be updated.<br>
+        <br>
+        **Sandbox only**: it is possible to delete a confirmed UserConsent by
+        adding the flag `permanent=true` in the URL. The Production API will return
+        a 400 if this flag is passed.<br>
+        <br>
+        *No authentication is required if the UserConsent has not yet been
+        confirmed.* <br>
+        Otherwise, you must
+        [generate an access_token](#operation/userconsents_token_list)
+        and pass it in the URL query: `?access_token=<userconsent_access_token>`
+      parameters:
+        - name: permanent
+          in: query
+          description: Delete permanently instead of withdrawing (only available in
+            Sandbox)
+          type: boolean
+      responses:
+        '204':
+          description: ''
+      tags:
+        - userconsents
+    parameters:
+      - name: user_consent_id
+        in: path
+        required: true
+        type: string
+        format: uuid
+  /userconsents/{user_consent_id}/check/:
+    get:
+      operationId: userconsents_check_list
+      summary: List accepted Purposes
+      description: |-
+        *Deprecated in favor of the more complete [Read UserConsent](#operation/userconsents_read) endpoint.* <br> Read the Purposes accepted by the user.
+
+        The list contains the `internal_id` of Purposes accepted by the
+        user the last time they updated the UserConsent.
+
+        The `internal_id` of the Terms and Conditions is
+        **terms_and_conditions**.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserConsentPurposes'
+      tags:
+        - userconsents
+      deprecated: true
+    parameters:
+      - name: user_consent_id
+        in: path
+        required: true
+        type: string
+  /userconsents/{user_consent_id}/confirm/:
+    post:
+      operationId: userconsents_confirm_create
+      summary: Confirm a UserConsent
+      description: |-
+        Confirm a UserConsent by binding it to a unique user identifier.
+
+        After confirmation, you will need an
+        [access_token](#operation/userconsents_token_list) to read or update
+        the UserConsent. Updating a confirmed UserConsent will also create a
+        new version.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConfirmUserConsent'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserConsentPurposes'
+      tags:
+        - userconsents
+    parameters:
+      - name: user_consent_id
+        in: path
+        required: true
+        type: string
+  /userconsents/{user_consent_id}/token/:
+    get:
+      operationId: userconsents_token_list
+      summary: Generate a UserConsent Access Token
+      description: |-
+        After it has been [confirmed](#operation/userconsents_confirm_create),
+        a UserConsent can only be read or modified by passing an `access_token`
+        in the API request URL.
+
+        The `access_token` can be generated with this endpoint and will be
+        invalidated as soon as the UserConsent is saved.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserConsentAccessToken'
+      tags:
+        - userconsents
+    parameters:
+      - name: user_consent_id
+        in: path
+        required: true
+        type: string
+  /userconsents/{user_consent_id}/version/:
+    get:
+      operationId: userconsents_version_list
+      summary: Read the version of a UserConsent
+      description: Retrieve the last accepted version of a UserConsent.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserConsentVersion'
+      tags:
+        - userconsents
+    parameters:
+      - name: user_consent_id
+        in: path
+        required: true
+        type: string
+definitions:
+  DataProcessor:
+    required:
+      - name
+      - address
+      - email
+    type: object
+    properties:
+      version:
+        title: Version
+        type: integer
+        maximum: 32767
+        minimum: 0
+      name:
+        title: Name
+        type: string
+        maxLength: 256
+        minLength: 1
+      contact:
+        title: Contact
+        type: string
+        maxLength: 256
+      address:
+        title: Address
+        type: string
+        maxLength: 256
+        minLength: 1
+      email:
+        title: Email
+        type: string
+        format: email
+        maxLength: 254
+        minLength: 1
+      vat:
+        title: Vat
+        type: string
+        maxLength: 128
+        x-nullable: true
+      on_behalf:
+        title: On behalf
+        type: boolean
+      privacy_policy:
+        title: Privacy policy
+        type: string
+        format: uri
+        maxLength: 200
+        x-nullable: true
+      terms_and_conditions:
+        title: Terms and conditions
+        type: string
+        format: uri
+        maxLength: 200
+        x-nullable: true
+  Purpose:
+    required:
+      - description
+      - long_description
+      - dataset
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      data_controllers:
+        type: array
+        items:
+          $ref: '#/definitions/DataProcessor'
+        readOnly: true
+      version:
+        title: Version
+        type: integer
+        maximum: 32767
+        minimum: 0
+      description:
+        title: Description
+        type: string
+        maxLength: 256
+        minLength: 1
+      internal_id:
+        title: Internal id
+        type: string
+        maxLength: 128
+      long_description:
+        title: Long description
+        type: string
+        minLength: 1
+      dataset:
+        title: Dataset
+        type: string
+        minLength: 1
+      mandatory:
+        title: Mandatory
+        type: boolean
+      position:
+        title: Position
+        type: integer
+        maximum: 32767
+        minimum: 0
+  TermsAndCondition:
+    type: object
+    properties:
+      version:
+        title: Version
+        type: integer
+        maximum: 32767
+        minimum: 0
+      url:
+        title: Url
+        type: string
+        format: uri
+        maxLength: 200
+        minLength: 1
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+        minLength: 1
+      mandatory:
+        title: Mandatory
+        type: boolean
+      restrictive:
+        title: Restrictive
+        type: string
+        x-nullable: true
+      full_text:
+        title: Full text
+        type: string
+    x-nullable: true
+  PrivacyPolicy:
+    type: object
+    properties:
+      version:
+        title: Version
+        type: integer
+        maximum: 32767
+        minimum: 0
+      url:
+        title: Url
+        type: string
+        format: uri
+        maxLength: 200
+        minLength: 1
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+        minLength: 1
+      full_text:
+        title: Full text
+        type: string
+    x-nullable: true
+  Consent:
+    type: object
+    properties:
+      purposes:
+        type: array
+        items:
+          $ref: '#/definitions/Purpose'
+        readOnly: true
+      terms_and_condition:
+        $ref: '#/definitions/TermsAndCondition'
+      privacy_policy:
+        $ref: '#/definitions/PrivacyPolicy'
+      version:
+        title: Version
+        type: integer
+        maximum: 32767
+        minimum: 0
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+        minLength: 1
+      creation:
+        title: Creation
+        type: string
+        format: date-time
+        readOnly: true
+      disabled:
+        title: Disabled
+        type: string
+        format: date-time
+        x-nullable: true
+      consent_id:
+        title: Consent id
+        type: string
+        format: uuid
+        readOnly: true
+      policy_url:
+        title: Policy url
+        type: string
+        format: uri
+        maxLength: 200
+        minLength: 1
+      website_domain:
+        title: Website domain
+        type: string
+        format: uri
+        maxLength: 200
+        minLength: 1
+      note:
+        title: Note
+        type: string
+        x-nullable: true
+  TermsAndConditionsJSON:
+    type: object
+    properties:
+      url:
+        title: Url
+        type: string
+        format: uri
+        maxLength: 200
+        minLength: 1
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+        minLength: 1
+      mandatory:
+        title: Mandatory
+        type: boolean
+      restrictive:
+        title: Restrictive
+        type: string
+        x-nullable: true
+      full_text:
+        title: Full text
+        type: string
+    x-nullable: true
+  PrivacyPolicyJSON:
+    type: object
+    properties:
+      url:
+        title: Url
+        type: string
+        format: uri
+        maxLength: 200
+        minLength: 1
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+        minLength: 1
+      full_text:
+        title: Full text
+        type: string
+    x-nullable: true
+  ConsentJSON:
+    description: Basic Consent data
+    type: object
+    properties:
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+        minLength: 1
+      website_domain:
+        title: Website domain
+        type: string
+        format: uri
+        maxLength: 200
+        minLength: 1
+      terms_and_conditions:
+        $ref: '#/definitions/TermsAndConditionsJSON'
+      privacy_policy:
+        $ref: '#/definitions/PrivacyPolicyJSON'
+      note:
+        title: Note
+        type: string
+        x-nullable: true
+  PurposeJSON:
+    description: List of Purposes. In the `data_controllers` list, provide the names
+      of one or more entities defined in 'entities'.
+    required:
+      - data_controllers
+      - description
+      - long_description
+      - dataset
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      data_controllers:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      description:
+        title: Description
+        type: string
+        maxLength: 256
+        minLength: 1
+      internal_id:
+        title: Internal id
+        type: string
+        maxLength: 128
+      long_description:
+        title: Long description
+        type: string
+        minLength: 1
+      dataset:
+        title: Dataset
+        type: string
+        minLength: 1
+      mandatory:
+        title: Mandatory
+        type: boolean
+  OpenApiConsentJSON:
+    required:
+      - entities
+      - consent
+      - purposes
+    type: object
+    properties:
+      entities:
+        title: Entities
+        description: The details of Data Controllers. Each entity must have a name
+          that can referenced in the purposes.
+        type: object
+        required: []
+        properties:
+          entity_name:
+            title: DataController
+            description: Contains info about a Data Controller
+            type: object
+            required:
+              - name
+              - contact
+              - address
+              - email
+              - vat
+              - privacy_policy
+              - terms_and_conditions
+            properties:
+              name:
+                type: string
+              contact:
+                type: string
+              address:
+                type: string
+              email:
+                type: string
+              vat:
+                type: string
+              privacy_policy:
+                type: string
+              terms_and_conditions:
+                type: string
+      consent:
+        $ref: '#/definitions/ConsentJSON'
+      purposes:
+        description: List of Purposes. In the `data_controllers` list, provide the
+          names of one or more entities defined in 'entities'.
+        type: array
+        items:
+          $ref: '#/definitions/PurposeJSON'
+      template:
+        title: Template
+        description: All fields are optional. Use this section to customize the text
+          displayed on the Consenta plugin, e.g. to show the Consent in other languages
+          than English. The request example contains the default text for each field.
+        type: object
+        required: []
+        properties:
+          text_purposes_section_title:
+            type: string
+            description: ''
+            example: Purposes
+          text_details_buttons:
+            type: string
+            description: ''
+            example: Details
+          text_revoke_notice:
+            type: string
+            description: This text is displayed right above the 'Save' button, stating
+              that the user can change or revoke consent at any time
+            example: You can change or revoke consent at any time.
+          text_save_btn:
+            type: string
+            description: ''
+            example: Save
+          text_mandatory_label:
+            type: string
+            description: This text is shown near mandatory options that have not been
+              selected by the user upon submitting the Consent
+            example: mandatory
+          text_error_msg:
+            type: string
+            description: This message appears on top of the Consent when a user attempts
+              to submit it with some mandatory options unchecked
+            example: All mandatory checkboxes must be checked
+          text_tc_accept:
+            type: string
+            description: ''
+            example: I have read and accept the Terms and Conditions
+          text_tc_restrictive_clauses:
+            type: string
+            description: ''
+            example: Restrictive clauses
+          text_pp_accept:
+            type: string
+            description: ''
+            example: I have read and accept the Privacy Policy
+  StatsDetail:
+    required:
+      - title
+      - is_draft
+      - is_disabled
+      - versions
+      - active_users
+    type: object
+    properties:
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+        minLength: 1
+      is_draft:
+        title: Is draft
+        type: boolean
+      is_disabled:
+        title: Is disabled
+        type: boolean
+      versions:
+        title: Versions
+        description: The number of versions in the history of this Consent. Does not
+          include drafts.
+        type: integer
+      active_users:
+        title: Active users
+        description: The total count of confirmed UserConsents for this Consent
+        type: integer
+  Stats:
+    required:
+      - total_consents
+      - active_consents
+      - active_users
+      - details
+    type: object
+    properties:
+      total_consents:
+        title: Total consents
+        type: integer
+      active_consents:
+        title: Active consents
+        description: The count of Consents that are not drafts and are not disabled
+        type: integer
+      active_users:
+        title: Active users
+        description: The total count of confirmed UserConsents
+        type: integer
+      details:
+        type: array
+        items:
+          $ref: '#/definitions/StatsDetail'
+  PurposeSmall:
+    required:
+      - description
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      description:
+        title: Description
+        type: string
+        maxLength: 256
+        minLength: 1
+      internal_id:
+        title: Internal id
+        type: string
+        maxLength: 128
+  UserConsent:
+    required:
+      - created_date
+    type: object
+    properties:
+      accepted:
+        type: array
+        items:
+          $ref: '#/definitions/PurposeSmall'
+        readOnly: true
+      rejected:
+        type: array
+        items:
+          $ref: '#/definitions/PurposeSmall'
+        readOnly: true
+      consent:
+        title: Consent
+        type: integer
+        readOnly: true
+      updated_date:
+        title: Updated date
+        type: string
+        format: date-time
+        readOnly: true
+      version:
+        title: Version
+        type: integer
+        maximum: 32767
+        minimum: 0
+      user_id:
+        title: User id
+        type: string
+        maxLength: 128
+        x-nullable: true
+      created_date:
+        title: Created date
+        type: string
+        format: date-time
+      withdrawn_date:
+        title: Withdrawn date
+        type: string
+        format: date-time
+        x-nullable: true
+      terms_and_conditions:
+        title: Terms and conditions
+        type: boolean
+        x-nullable: true
+      privacy_policy:
+        title: Privacy policy
+        type: boolean
+        x-nullable: true
+      user_consent_id:
+        title: User consent id
+        type: string
+        format: uuid
+        readOnly: true
+      document:
+        title: Document
+        type: string
+        format: uuid
+        readOnly: true
+      access_token:
+        title: Access token
+        type: string
+        format: uuid
+        readOnly: true
+      ips:
+        type: array
+        items:
+          title: Ips
+          type: string
+          maxLength: 15
+      next:
+        title: Next
+        type: integer
+        x-nullable: true
+  UserConsentCreate:
+    required:
+      - consent_id
+      - accepted
+    type: object
+    properties:
+      consent_id:
+        title: Consent id
+        description: UUID of the Consent
+        type: string
+        format: uuid
+      tc:
+        title: Tc
+        description: whether or not the user accepted the Terms and Conditions.
+        type: boolean
+        x-nullable: true
+      tc_restrictive:
+        title: Tc restrictive
+        description: whether or not the user accepted the the restrictive clauses
+          (if any) of the Terms and Conditions.
+        type: boolean
+        x-nullable: true
+      pp:
+        title: Pp
+        description: whether or not the user accepted the Privacy Policy.
+        type: boolean
+        x-nullable: true
+      accepted:
+        description: list of IDs of the Purposes that the user accepted.<br>*You can
+          specify either the Purpose's `id` (integer) or the`internal_id` (string).*
+        type: array
+        items:
+          type: string
+          x-nullable: true
+  UserConsentId:
+    type: object
+    properties:
+      user_consent_id:
+        title: User consent id
+        type: string
+        format: uuid
+        readOnly: true
+  UserConsentUpdate:
+    required:
+      - accepted
+    type: object
+    properties:
+      tc:
+        title: Tc
+        description: whether or not the user accepted the Terms and Conditions.
+        type: boolean
+        x-nullable: true
+      tc_restrictive:
+        title: Tc restrictive
+        description: whether or not the user accepted the the restrictive clauses
+          (if any) of the Terms and Conditions.
+        type: boolean
+        x-nullable: true
+      pp:
+        title: Pp
+        description: whether or not the user accepted the Privacy Policy.
+        type: boolean
+        x-nullable: true
+      accepted:
+        description: list of IDs of the Purposes that the user accepted.<br>*You can
+          specify either the Purpose's `id` (integer) or the`internal_id` (string).*
+        type: array
+        items:
+          type: string
+          x-nullable: true
+  UserConsentPurposes:
+    required:
+      - accepted
+    type: object
+    properties:
+      user_consent_id:
+        title: User consent id
+        type: string
+        format: uuid
+        readOnly: true
+      accepted:
+        type: array
+        items:
+          type: string
+          x-nullable: true
+  ConfirmUserConsent:
+    required:
+      - user_id
+    type: object
+    properties:
+      user_id:
+        title: User id
+        description: Identifies the user who submitted this UserConsent. Must be a
+          unique string, e.g. an email address (recommended) or a UUID.
+        type: string
+        minLength: 1
+  UserConsentAccessToken:
+    type: object
+    properties:
+      user_consent_id:
+        title: User consent id
+        type: string
+        format: uuid
+        readOnly: true
+      access_token:
+        title: Access token
+        type: string
+        format: uuid
+        readOnly: true
+  UserConsentVersion:
+    required:
+      - is_last
+      - version
+    type: object
+    properties:
+      user_consent_id:
+        title: User consent id
+        type: string
+        format: uuid
+        readOnly: true
+      is_last:
+        title: Is last
+        description: is `false` if the Consent has changed since the last time the
+          user submitted this UserConsent.
+        type: boolean
+      version:
+        title: Version
+        description: The current version of this UserConsent
+        type: integer

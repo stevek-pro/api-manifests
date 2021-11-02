@@ -1,0 +1,752 @@
+swagger: '2.0'
+info:
+  title: 'Chino.io :: Scriba API'
+  description: An API to create and search immutable, legally-validated Audit Logs.<br>Provided
+    by Chino.io - https://www.chino.io
+  contact:
+    email: tech-support@chino.io
+  version: v1
+host: scriba.test.chino.io
+schemes:
+  - https
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+    name: Authorization
+    in: header
+    description: |-
+      Basic authentication with Customer ID and Customer Key.
+
+      You can manage your Customer Keys from the Chino.io Console
+  BearerJwt:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: A Json Web Token dispatched by Chino.io authentication service. *Available
+      soon.*
+security:
+  - Basic: []
+  - BearerJwt: []
+paths:
+  /events/:
+    get:
+      operationId: events_list
+      summary: List all Events
+      description: List all the existent Events owned by the current user.
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Event'
+      tags:
+        - events
+    post:
+      operationId: events_create
+      summary: Create a new Event
+      description: |-
+        Create a new Event. A unique event uuid will be automatically generated
+        for further usage.<br><br>*NOTES:*<br>- `crontab` must use the syntax of
+        cron jobs in Unix-like systems<br>- `query` has the same format of a Log
+        Search query (eg. ```{"field": "my-field", "type": "eq", "value":
+        "my_value" }```. Only the set of logs returned by this query will be taken
+        into consideration for the event<br>- `action` one of the supported
+        actions. See
+        [the documentation](https://docs.chino.io/tutorials/audit/tutorial-audit-notifications#actions)
+        of available actions.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Event'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Event'
+      tags:
+        - events
+    parameters: []
+  /events/{event_id}/:
+    get:
+      operationId: events_read
+      summary: Read an Event
+      description: Retrieve and read all the Event details using its uuid.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Event'
+      tags:
+        - events
+    put:
+      operationId: events_update
+      summary: Update an Event
+      description: 'Update an Event (idempotent): all the fields are required as in
+        creation.'
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Event'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Event'
+      tags:
+        - events
+    patch:
+      operationId: events_partial_update
+      summary: Update an Event (partial)
+      description: Partially update an Event, submitting only the fields which need
+        changes.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Event'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Event'
+      tags:
+        - events
+    delete:
+      operationId: events_delete
+      summary: Delete an Event
+      description: |-
+        Completely remove an Event from the database.<br><br>Instead of deleting,
+        it's possible to perform a partial update setting `active=false` to
+        temporarily suspend an Event keeping it saved for further editing and
+        usage.
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - events
+    parameters:
+      - name: event_id
+        in: path
+        required: true
+        type: string
+  /exported/:
+    get:
+      operationId: exported_list
+      summary: List exportable Blocks
+      description: List all the exportable blocks of a user.
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Block'
+      tags:
+        - blocks
+    parameters: []
+  /exported/{block_id}:
+    get:
+      operationId: exported_read
+      summary: Export a Block
+      description: |-
+        Download a zip which holds the log data in json format plus
+        the metadata of the block itself.
+      parameters: []
+      responses:
+        '201':
+          description: File Attachment
+          schema:
+            type: file
+      produces: application/zip
+      tags:
+        - blocks
+    parameters:
+      - name: block_id
+        in: path
+        required: true
+        type: string
+  /logs/:
+    get:
+      operationId: logs_list
+      summary: List all Logs
+      description: List all logs which belong to a user.
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+        - name: all
+          in: query
+          description: Get logs of any type, not just the ones manually generated
+            by users.
+          type: boolean
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Log'
+      tags:
+        - logs
+    post:
+      operationId: logs_create
+      summary: Create a new Log
+      description: Submit a new immutable Audit Log with custom values.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuditLog'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/AuditLog'
+      tags:
+        - logs
+    parameters: []
+  /logs/_multiple/:
+    post:
+      operationId: logs__multiple
+      summary: Create multiple Logs (bulk)
+      description: Submit a LIST of new immutable Audit Log with custom values.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AuditLog'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/MultiAuditLogSerializerOutput'
+      tags:
+        - logs
+    parameters: []
+  /search/:
+    post:
+      operationId: logs_search
+      summary: Search by query
+      description: |-
+        Process a query to search over a user's logs. Search is available over the
+        following fields:
+
+        `action`, `begin_time`, `call_size`, `call_type`, `caller_id`,
+        `caller_type`, `end_time`, `http_method`, `http_status`, `http_url`,
+        `ip`, `log_time`, `message`, `request_id`, `resource_id`,
+        `resource_type`, `response_time_msec`, `specifier`, `user_agent`
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SearchRequest'
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '201':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Log'
+      tags:
+        - logs
+    parameters: []
+  /stats:
+    get:
+      operationId: stats_read
+      summary: Retrieve customer statistics
+      description: |-
+        Get some figures about logs saved in the system for the user,
+        such as total counts, oldest log datetime, month usage.
+      parameters:
+        - name: ui
+          in: query
+          description: include in the stats those logs generated by interactions with
+            the Chino.io Console web UI
+          type: boolean
+          default: false
+        - name: t
+          in: query
+          description: Amount of days to retrieve stats for. Can be 30, 60 or 90.
+          type: integer
+          default: 30
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Stat'
+      tags:
+        - stats
+    parameters: []
+definitions:
+  Event:
+    required:
+      - name
+      - crontab
+      - query
+      - action
+    type: object
+    properties:
+      event_id:
+        title: Event id
+        type: string
+        format: uuid
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      crontab:
+        title: Crontab
+        type: string
+        maxLength: 50
+        minLength: 1
+      query:
+        title: Query
+        type: object
+      last_run:
+        title: Last run
+        type: string
+        format: date-time
+        readOnly: true
+      action:
+        title: Action
+        type: object
+      active:
+        title: Active
+        type: boolean
+  Block:
+    required:
+      - hash
+      - block_id
+      - start_time
+      - end_time
+      - root
+      - height
+      - length
+      - prev_hash
+      - tree_file
+      - log_file
+    type: object
+    properties:
+      hash:
+        title: Hash
+        type: string
+        minLength: 1
+      block_id:
+        title: Block id
+        type: string
+        format: uuid
+      start_time:
+        title: Start time
+        type: string
+        format: date-time
+      end_time:
+        title: End time
+        type: string
+        format: date-time
+      log_time:
+        title: Log time
+        type: string
+        format: date-time
+        readOnly: true
+      root:
+        title: Root
+        type: string
+        maxLength: 256
+        minLength: 1
+      height:
+        title: Height
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      length:
+        title: Length
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      prev_hash:
+        title: Prev hash
+        type: string
+        maxLength: 256
+        minLength: 1
+      tree_file:
+        title: Tree file
+        type: string
+        maxLength: 512
+        minLength: 1
+      log_file:
+        title: Log file
+        type: string
+        maxLength: 512
+        minLength: 1
+      valid:
+        title: Valid
+        type: boolean
+      validation_time:
+        title: Validation time
+        type: string
+        format: date-time
+        x-nullable: true
+  Log:
+    type: object
+    properties:
+      action:
+        title: Action
+        type: string
+        minLength: 1
+      begin_time:
+        title: Begin time
+        type: string
+        format: date-time
+      call_size:
+        title: Call size
+        type: number
+      caller_id:
+        title: Caller id
+        type: string
+        minLength: 1
+      caller_type:
+        title: Caller type
+        type: string
+        minLength: 1
+      end_time:
+        title: End time
+        type: string
+        format: date-time
+      http_method:
+        title: Http method
+        type: string
+        minLength: 1
+      http_status:
+        title: Http status
+        type: string
+        minLength: 1
+      http_url:
+        title: Http url
+        type: string
+        minLength: 1
+      ip:
+        title: Ip
+        type: string
+        minLength: 1
+      message:
+        title: Message
+        type: string
+        minLength: 1
+      request_id:
+        title: Request id
+        type: string
+        minLength: 1
+      resource_id:
+        title: Resource id
+        type: string
+        minLength: 1
+      resource_type:
+        title: Resource type
+        type: string
+        minLength: 1
+      response_time_msec:
+        title: Response time msec
+        type: number
+      specifier:
+        title: Specifier
+        type: string
+        minLength: 1
+      user_agent:
+        title: User agent
+        type: string
+        minLength: 1
+      extra:
+        title: Extra
+        type: object
+        additionalProperties:
+          type: string
+          x-nullable: true
+      call_type:
+        title: Call type
+        type: string
+        minLength: 1
+      log_time:
+        title: Log time
+        type: string
+        format: date-time
+      owner_id:
+        title: Owner id
+        type: string
+        minLength: 1
+      owner_username:
+        title: Owner username
+        type: string
+        minLength: 1
+  AuditLog:
+    type: object
+    properties:
+      action:
+        title: Action
+        type: string
+        minLength: 1
+      begin_time:
+        title: Begin time
+        type: string
+        format: date-time
+      call_size:
+        title: Call size
+        type: number
+      caller_id:
+        title: Caller id
+        type: string
+        minLength: 1
+      caller_type:
+        title: Caller type
+        type: string
+        minLength: 1
+      end_time:
+        title: End time
+        type: string
+        format: date-time
+      http_method:
+        title: Http method
+        type: string
+        minLength: 1
+      http_status:
+        title: Http status
+        type: string
+        minLength: 1
+      http_url:
+        title: Http url
+        type: string
+        minLength: 1
+      ip:
+        title: Ip
+        type: string
+        minLength: 1
+      message:
+        title: Message
+        type: string
+        minLength: 1
+      request_id:
+        title: Request id
+        type: string
+        minLength: 1
+      resource_id:
+        title: Resource id
+        type: string
+        minLength: 1
+      resource_type:
+        title: Resource type
+        type: string
+        minLength: 1
+      response_time_msec:
+        title: Response time msec
+        type: number
+      specifier:
+        title: Specifier
+        type: string
+        minLength: 1
+      user_agent:
+        title: User agent
+        type: string
+        minLength: 1
+      extra:
+        title: Extra
+        type: object
+        additionalProperties:
+          type: string
+          x-nullable: true
+  MultiAuditLogSerializerOutput:
+    required:
+      - errors
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/AuditLog'
+  SortRule:
+    required:
+      - field
+      - order
+    type: object
+    properties:
+      field:
+        title: Field
+        type: string
+        minLength: 1
+      order:
+        title: Order
+        type: string
+        enum:
+          - asc
+          - desc
+  SearchRequest:
+    required:
+      - query
+    type: object
+    properties:
+      query:
+        title: Query
+        type: object
+      sort:
+        type: array
+        items:
+          $ref: '#/definitions/SortRule'
+  Stat:
+    required:
+      - manual_logs
+      - all_logs
+      - oldest_log
+      - total_blocks
+      - total_log_in_blocks
+      - oldest_block
+      - month_data
+    type: object
+    properties:
+      manual_logs:
+        title: Manual logs
+        type: integer
+        x-nullable: true
+      all_logs:
+        title: All logs
+        type: integer
+        x-nullable: true
+      oldest_log:
+        title: Oldest log
+        type: string
+        format: date-time
+        x-nullable: true
+      total_blocks:
+        title: Total blocks
+        type: integer
+      total_log_in_blocks:
+        title: Total log in blocks
+        type: integer
+      oldest_block:
+        title: Oldest block
+        type: string
+        format: date-time
+        x-nullable: true
+      month_data:
+        title: Month data
+        type: object

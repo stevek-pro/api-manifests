@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/chino-api-react.iml" filepath="$PROJECT_DIR$/.idea/chino-api-react.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../feathers-basics/.idea/feathers-basics.iml" filepath="$PROJECT_DIR$/../feathers-basics/.idea/feathers-basics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../myskills-api/.idea/myskills-api.iml" filepath="$PROJECT_DIR$/../myskills-api/.idea/myskills-api.iml" />
     </modules>
   </component>
 </project>
