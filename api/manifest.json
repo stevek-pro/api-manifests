@@ -10,7 +10,7 @@
 	"description" : "Chino Consenta Specification"
     },{
 	  "title" : "Myskills API",
-	  "url" : "https://raw.githubusercontent.com/stevek-pro/api-manifests/main/api/myskills.yaml",
+	  "url" : "https://raw.githubusercontent.com/stevek-pro/api-manifests/main/api/myskills.yml",
 	  "description" : "Myskills API Specification"
   }]
 }
