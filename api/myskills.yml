@@ -1,25 +1,21 @@
 swagger: "2.0"
-
 info:
   version: 0.0.2
   title: MySkills-API
   description: An API to authorise mobile clients against third party APIs and fetch bearer web tokens.
-
 schemes:
   - https
 host: ms-dev.anyapi.de
 basePath: /
-
 paths:
   /authentication:
     post:
-      summary: Authenticate against myskills-api
+      summary: Authenticate app against myskills-api
       description: Returns a User ID and a Web Token
-      
       parameters:
-        - name: person
+        - name: app
           in: body
-          description: The person to create.
+          description: The myskills app credentials
           schema:
             required:
               - email
@@ -32,12 +28,9 @@ paths:
                 type: string
               strategy:
                 type: string
-    
       responses:
-        401:
-          description: Unauthorized
         200:
-          description: Authorisation Data from Myskills API
+          description: Authorisation Data for Myskills API
           schema:
             type: object
             properties:
@@ -46,49 +39,70 @@ paths:
               user:
                 type: object
                 properties:
-                  id: 
+                  id:
                     type: string
-             
-                  
+        401:
+          description: Unauthorized
   /remote:
-    get:
-      summary: Authenticate against chino-api App/Client
-      description: Returns a User ID and a Web Token
-      
+     get:
+      summary: Get List of _ids for Remote Auth
+      description: Returns a List of _ids from Myskills API
       parameters:
-        - name: person
-          in: body
-          description: The person to create.
-          schema:
-            required:
-              - email
-              - password
-              - strategy
-            properties:
-              email:
-                type: string
-              password:
-                type: string
-              strategy:
-                type: string
-    
+        - name: token
+          in: header
+          description: Provide the MySkills Web Token as an bearer token in authorization header
+          required: true
+          type: string
       responses:
+        200:
+          description: Authorisation Data proxied via Myskills API
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                _id:
+                  type: string
         401:
           description: Unauthorized
+  /remote/{_id}:
+    get:
+      summary: Authenticate against Chino API
+      description: Returns a Web Token, Refresh Token and permissions scope.
+      
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          description: The user's id.
+          type: string
+        - name: token
+          in: header
+          description: Provide the MySkills Web Token as an bearer token in authorization header
+          required: true
+          type: string
+      responses:
         200:
-          description: Authorisation Data from Myskills API
+          description: Authorisation Data proxied via Myskills API
           schema:
             type: object
             properties:
-              accessToken:
+              result:
                 type: string
-              user:
+              result_code:
+                type: integer
+              data:
                 type: object
                 properties:
-                  id: 
+                  access_token: 
                     type: string
-             
-                  
-                  
-                    
-                  
+                  expires_in:
+                    type: integer
+                  token_type:
+                    type: string
+                  scope:
+                    type: string
+                  refresh_token:
+                    type: string
+        401:
+          description: Unauthorized
